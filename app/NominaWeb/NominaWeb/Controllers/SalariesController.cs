@@ -12,7 +12,10 @@ namespace NominaWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var items = await _db.Salaries.OrderByDescending(s => s.FromDate).ToListAsync();
+            var items = await _db.Salaries
+                .OrderByDescending(s => s.FromDate)
+                .ToListAsync();
+
             return View(items);
         }
 
@@ -24,7 +27,7 @@ namespace NominaWeb.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Verificar empleado existe (mínimo)
+            // ✅ Validación 1: Empleado debe existir
             var empOk = await _db.Employees.AnyAsync(e => e.EmpNo == model.EmpNo);
             if (!empOk)
             {
@@ -32,9 +35,37 @@ namespace NominaWeb.Controllers
                 return View(model);
             }
 
+            // ✅ Validación 2: Fechas coherentes (Hasta no puede ser menor que Desde)
+            if (model.ToDate.HasValue && model.ToDate.Value < model.FromDate)
+            {
+                ModelState.AddModelError("", "La fecha Hasta no puede ser menor que la fecha Desde.");
+                return View(model);
+            }
+
+            // ✅ Validación 3: NO permitir solapamiento de salarios del mismo empleado
+            // Regla: No puede existir otro salario cuyo rango se cruce con el nuevo rango.
+            var existing = await _db.Salaries
+                .Where(s => s.EmpNo == model.EmpNo)
+                .ToListAsync();
+
+            // Interpreta null como “vigente hasta infinito”
+            static bool Solapa(DateTime aFrom, DateTime? aTo, DateTime bFrom, DateTime? bTo)
+            {
+                var aEnd = aTo ?? DateTime.MaxValue;
+                var bEnd = bTo ?? DateTime.MaxValue;
+                return aFrom <= bEnd && bFrom <= aEnd;
+            }
+
+            if (existing.Any(s => Solapa(s.FromDate, s.ToDate, model.FromDate, model.ToDate)))
+            {
+                ModelState.AddModelError("", "Ya existe un salario que se solapa con el rango de fechas ingresado para este empleado.");
+                return View(model);
+            }
+
+            // Guardar salario
             _db.Salaries.Add(model);
 
-            // Auditoría (requisito_db.LogAuditoriaSalarios
+            // ✅ Auditoría (requisito)
             _db.LogAuditoriaSalarios.Add(new Log_AuditoriaSalarios
             {
                 Usuario = Environment.UserName,
