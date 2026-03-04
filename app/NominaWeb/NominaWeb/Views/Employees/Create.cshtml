@@ -1,0 +1,47 @@
+﻿@model NominaWeb.Models.Employee
+@{
+    ViewData["Title"] = "Nuevo empleado";
+}
+
+<h1>Nuevo empleado</h1>
+
+<form method="post">
+    <div class="mb-2">
+        <label class="form-label">EmpNo</label>
+        <input class="form-control" asp-for="EmpNo" />
+        <span asp-validation-for="EmpNo" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Nombres</label>
+        <input class="form-control" asp-for="FirstName" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Apellidos</label>
+        <input class="form-control" asp-for="LastName" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Correo</label>
+        <input class="form-control" asp-for="Correo" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">HireDate</label>
+        <input class="form-control" asp-for="HireDate" type="date" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Guardar</button>
+    <a class="btn btn-secondary" href="/Employees">Volver</a>
+
+    <div class="text-danger mt-2">
+        @Html.ValidationSummary()
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

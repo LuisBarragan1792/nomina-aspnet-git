@@ -1,0 +1,39 @@
+﻿@model IEnumerable<NominaWeb.Models.Employee>
+@{
+    ViewData["Title"] = "Empleados";
+}
+
+<h1>Empleados</h1>
+
+@if (TempData["msg"] != null)
+{
+    <div style="padding:10px;border:1px solid #ccc;margin-bottom:10px;">
+        @TempData["msg"]
+    </div>
+}
+
+<p><a class="btn btn-primary" href="/Employees/Create">+ Nuevo empleado</a></p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>EmpNo</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Correo</th>
+            <th>HireDate</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.EmpNo</td>
+                <td>@e.FirstName</td>
+                <td>@e.LastName</td>
+                <td>@e.Correo</td>
+                <td>@(e.HireDate == default ? "" : e.HireDate.ToString("yyyy-MM-dd"))</td>
+            </tr>
+        }
+    </tbody>
+</table>

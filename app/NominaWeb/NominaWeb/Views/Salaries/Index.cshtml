@@ -1,0 +1,39 @@
+﻿@model IEnumerable<NominaWeb.Models.Salary>
+@{
+    ViewData["Title"] = "Salarios";
+}
+<h1>Salarios</h1>
+
+@if (TempData["msg"] != null)
+{
+    <div style="padding:10px;border:1px solid #ccc;margin-bottom:10px;">
+        @TempData["msg"]
+    </div>
+}
+
+<p>
+    <a class="btn btn-primary" href="/Salaries/Create">+ Nuevo salario</a>
+    <a class="btn btn-outline-dark" href="/Salaries/Audit">Ver auditoría</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>EmpNo</th>
+            <th>Monto</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.EmpNo</td>
+                <td>@s.Amount</td>
+                <td>@s.FromDate.ToString("yyyy-MM-dd")</td>
+                <td>@(s.ToDate.HasValue ? s.ToDate.Value.ToString("yyyy-MM-dd") : "")</td>
+            </tr>
+        }
+    </tbody>
+</table>

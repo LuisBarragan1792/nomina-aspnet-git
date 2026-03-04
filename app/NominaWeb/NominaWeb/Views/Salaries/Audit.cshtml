@@ -1,0 +1,35 @@
+﻿@model IEnumerable<NominaWeb.Models.Log_AuditoriaSalarios>
+
+@{
+    ViewData["Title"] = "Auditoría de Salarios";
+}
+
+<h2>Auditoría de Salarios</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>EmpNo</th>
+            <th>Salario</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Usuario</td>
+                <td>@item.FechaActualizacion</td>
+                <td>@item.EmpNo</td>
+                <td>@item.Salario</td>
+                <td>@item.DetalleCambio</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-secondary" asp-controller="Salaries" asp-action="Index">Volver</a>

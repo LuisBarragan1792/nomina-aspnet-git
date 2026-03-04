@@ -1,0 +1,29 @@
+﻿@model NominaWeb.Models.Department
+@{
+    ViewData["Title"] = "Nuevo departamento";
+}
+<h1>Nuevo departamento</h1>
+
+<form method="post">
+    <div class="mb-2">
+        <label class="form-label">DeptNo</label>
+        <input class="form-control" asp-for="DeptNo" />
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" asp-for="DeptName" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" asp-for="IsActive" />
+        <label class="form-check-label">Activo</label>
+    </div>
+
+    <button class="btn btn-success" type="submit">Guardar</button>
+    <a class="btn btn-secondary" href="/Departments">Volver</a>
+
+    <div class="text-danger mt-2">
+        @Html.ValidationSummary()
+    </div>
+</form>

@@ -1,0 +1,34 @@
+﻿@model NominaWeb.Models.Salary
+@{
+    ViewData["Title"] = "Nuevo salario";
+}
+<h1>Nuevo salario</h1>
+
+<form method="post">
+    <div class="mb-2">
+        <label class="form-label">EmpNo</label>
+        <input class="form-control" asp-for="EmpNo" />
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Monto</label>
+        <input class="form-control" asp-for="Amount" />
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Desde</label>
+        <input class="form-control" asp-for="FromDate" type="date" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Hasta (opcional)</label>
+        <input class="form-control" asp-for="ToDate" type="date" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Guardar</button>
+    <a class="btn btn-secondary" href="/Salaries">Volver</a>
+
+    <div class="text-danger mt-2">
+        @Html.ValidationSummary()
+    </div>
+</form>
