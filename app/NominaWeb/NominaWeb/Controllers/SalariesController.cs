@@ -60,6 +60,7 @@ namespace NominaWeb.Controllers
             {
                 ModelState.AddModelError("", "Ya existe un salario que se solapa con el rango de fechas ingresado para este empleado.");
                 return View(model);
+
             }
 
             // Guardar salario
@@ -89,6 +90,7 @@ namespace NominaWeb.Controllers
                 .ToListAsync();
 
             return View(logs);
+
         }
     }
 }
