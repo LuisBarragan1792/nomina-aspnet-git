@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NominaWeb.Data;
 using NominaWeb.Models;
 
 namespace NominaWeb.Controllers
 {
+    [Authorize] // ✅ SOLO Salarios exige login
     public class SalariesController : Controller
     {
         private readonly NominaDbContext _db;
@@ -43,12 +45,10 @@ namespace NominaWeb.Controllers
             }
 
             // ✅ Validación 3: NO permitir solapamiento de salarios del mismo empleado
-            // Regla: No puede existir otro salario cuyo rango se cruce con el nuevo rango.
             var existing = await _db.Salaries
                 .Where(s => s.EmpNo == model.EmpNo)
                 .ToListAsync();
 
-            // Interpreta null como “vigente hasta infinito”
             static bool Solapa(DateTime aFrom, DateTime? aTo, DateTime bFrom, DateTime? bTo)
             {
                 var aEnd = aTo ?? DateTime.MaxValue;
@@ -60,16 +60,15 @@ namespace NominaWeb.Controllers
             {
                 ModelState.AddModelError("", "Ya existe un salario que se solapa con el rango de fechas ingresado para este empleado.");
                 return View(model);
-
             }
 
             // Guardar salario
             _db.Salaries.Add(model);
 
-            // ✅ Auditoría (requisito)
+            // ✅ Auditoría (registrar usuario logueado si existe)
             _db.LogAuditoriaSalarios.Add(new Log_AuditoriaSalarios
             {
-                Usuario = Environment.UserName,
+                Usuario = User?.Identity?.Name ?? Environment.UserName,
                 FechaActualizacion = DateTime.Now,
                 DetalleCambio = "Creación/Actualización de salario (demo)",
                 Salario = model.Amount,
@@ -81,7 +80,6 @@ namespace NominaWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Vista de auditoría
         public async Task<IActionResult> Audit()
         {
             var logs = await _db.LogAuditoriaSalarios
@@ -90,7 +88,6 @@ namespace NominaWeb.Controllers
                 .ToListAsync();
 
             return View(logs);
-
         }
     }
 }

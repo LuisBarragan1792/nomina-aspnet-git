@@ -13,23 +13,25 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<NominaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NominaDb")));
 
-// Autenticación
+// Autenticación (cookie)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt =>
     {
         opt.LoginPath = "/Auth/Login";
+        opt.LogoutPath = "/Auth/Logout";
         opt.AccessDeniedPath = "/Auth/Denied";
-        opt.ExpireTimeSpan = TimeSpan.FromHours(8);
-        opt.SlidingExpiration = true;
+
+        // ✅ Para que PIDA LOGIN frecuentemente
+        opt.ExpireTimeSpan = TimeSpan.FromSeconds(10); // <- ajusta si quieres más/menos
+        opt.SlidingExpiration = false; // <- NO renueva la cookie automáticamente
     });
 
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-
 // ===============================
-// CREACIÓN DE BASE + SEED DATOS
+// CREACIÓN DE BASE + MIGRATIONS + SEED
 // ===============================
 using (var scope = app.Services.CreateScope())
 {
@@ -38,10 +40,7 @@ using (var scope = app.Services.CreateScope())
     // Crear base y aplicar migraciones
     db.Database.Migrate();
 
-
-    // ===============================
-    // SEED DEPARTMENTS (PUNTO 5.4)
-    // ===============================
+    // Seed Departments (PUNTO 5.4)
     if (!db.Departments.Any())
     {
         db.Departments.AddRange(
@@ -53,10 +52,7 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
-
-    // ===============================
-    // SEED USUARIO ADMIN
-    // ===============================
+    // Seed Usuario admin
     if (!db.Users.Any(u => u.Usuario == "admin"))
     {
         var hasher = new PasswordHasher<AppUser>();
@@ -75,11 +71,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
 // ===============================
 // PIPELINE ASP.NET
 // ===============================
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

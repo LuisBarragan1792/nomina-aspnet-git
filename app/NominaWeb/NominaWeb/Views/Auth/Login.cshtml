@@ -1,0 +1,54 @@
+﻿@model NominaWeb.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Acceso al sistema</h4>
+            </div>
+
+            <div class="card-body">
+
+                <form asp-action="Login" method="post">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Usuario" class="form-label"></label>
+                        <input asp-for="Usuario" class="form-control" />
+                        <span asp-validation-for="Usuario" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Clave" class="form-label"></label>
+                        <input asp-for="Clave" class="form-control" type="password" />
+                        <span asp-validation-for="Clave" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        Ingresar
+                    </button>
+
+                </form>
+
+                <hr />
+
+                <small class="text-muted">
+                    Usuario demo: <b>admin</b> <br />
+                    Clave demo: <b>Admin123*</b>
+                </small>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
