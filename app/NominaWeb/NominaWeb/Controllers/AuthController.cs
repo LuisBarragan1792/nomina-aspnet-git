@@ -21,6 +21,7 @@ namespace NominaWeb.Controllers
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
+            // Guardamos el returnUrl para que el formulario lo envíe de vuelta
             ViewBag.ReturnUrl = returnUrl;
             return View(new LoginViewModel());
         }
@@ -61,21 +62,21 @@ namespace NominaWeb.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            // ✅ CLAVE: NO fijar ExpiresUtc a 8 horas.
-            // Ponemos expiración corta para que vuelva a pedir login.
+            // Cookie corta (si tú ya la configuraste para olvidar rápido, aquí no la alargamos)
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
                 new AuthenticationProperties
                 {
-                    IsPersistent = false,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(15) // <-- cámbialo a 30/60 si quieres
+                    IsPersistent = false
                 });
 
+            // ✅ Si el usuario venía de /Salaries, volver allá
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
-            return RedirectToAction("Index", "Home");
+            // Si no hay returnUrl, por defecto a Salarios (porque ese es el módulo protegido)
+            return RedirectToAction("Index", "Salaries");
         }
 
         [HttpPost]

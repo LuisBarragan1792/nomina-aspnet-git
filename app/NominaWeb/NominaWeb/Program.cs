@@ -17,6 +17,7 @@ builder.Services.AddDbContext<NominaDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt =>
     {
+        opt.Cookie.Name = "NominaAuthV2";
         opt.LoginPath = "/Auth/Login";
         opt.LogoutPath = "/Auth/Logout";
         opt.AccessDeniedPath = "/Auth/Denied";
