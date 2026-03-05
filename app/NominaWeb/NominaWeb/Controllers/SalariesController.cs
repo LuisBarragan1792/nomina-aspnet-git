@@ -10,7 +10,11 @@ namespace NominaWeb.Controllers
     public class SalariesController : Controller
     {
         private readonly NominaDbContext _db;
-        public SalariesController(NominaDbContext db) => _db = db;
+
+        public SalariesController(NominaDbContext db)
+        {
+            _db = db;
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -25,6 +29,7 @@ namespace NominaWeb.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Salary model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -62,24 +67,31 @@ namespace NominaWeb.Controllers
                 return View(model);
             }
 
-            // Guardar salario
+            // ✅ Guardar salario
             _db.Salaries.Add(model);
 
-            // ✅ Auditoría (registrar usuario logueado si existe)
+            // ✅ Auditoría: registrar creación (usuario logueado si existe)
+            var usuario = (User?.Identity?.IsAuthenticated == true && !string.IsNullOrWhiteSpace(User.Identity!.Name))
+                ? User.Identity!.Name!
+                : Environment.UserName;
+
             _db.LogAuditoriaSalarios.Add(new Log_AuditoriaSalarios
             {
-                Usuario = User?.Identity?.Name ?? Environment.UserName,
+                Usuario = usuario,
                 FechaActualizacion = DateTime.Now,
-                DetalleCambio = "Creación/Actualización de salario (demo)",
+                DetalleCambio = "Creación de salario",
                 Salario = model.Amount,
                 EmpNo = model.EmpNo
             });
 
             await _db.SaveChangesAsync();
+
             TempData["msg"] = "Salario guardado y auditado.";
             return RedirectToAction(nameof(Index));
         }
 
+        // ✅ Vista de auditoría (últimos 50)
+        [HttpGet]
         public async Task<IActionResult> Audit()
         {
             var logs = await _db.LogAuditoriaSalarios
