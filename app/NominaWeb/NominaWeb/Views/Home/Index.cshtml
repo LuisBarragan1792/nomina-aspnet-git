@@ -1,8 +1,61 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model NominaWeb.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard</h2>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Empleados</h6>
+                    <h2>@Model.TotalEmpleados</h2>
+                    <a class="btn btn-sm btn-outline-primary" asp-controller="Employees" asp-action="Index">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Departamentos</h6>
+                    <h2>@Model.TotalDepartamentos</h2>
+                    <a class="btn btn-sm btn-outline-primary" asp-controller="Departments" asp-action="Index">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Salarios vigentes</h6>
+                    <h2>@Model.SalariosVigentes</h2>
+                    <a class="btn btn-sm btn-outline-primary" asp-controller="Salaries" asp-action="Index">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Por vencer (30 días)</h6>
+                    <h2>@Model.SalariosPorVencer</h2>
+                    <a class="btn btn-sm btn-outline-danger" asp-controller="Salaries" asp-action="Index">Revisar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <h5 class="mb-3">Accesos rápidos</h5>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" asp-controller="Employees" asp-action="Create">+ Nuevo empleado</a>
+        <a class="btn btn-primary" asp-controller="Departments" asp-action="Create">+ Nuevo departamento</a>
+        <a class="btn btn-secondary" asp-controller="Salaries" asp-action="Create">+ Registrar salario</a>
+        <a class="btn btn-outline-secondary" asp-controller="Audit" asp-action="Index">Auditoría salarios</a>
+    </div>
 </div>
